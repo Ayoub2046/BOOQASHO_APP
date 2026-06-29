@@ -56,7 +56,8 @@ const db = {
   get visits() { return getInstance().visits; },
   get auditLogs() { return getInstance().auditLogs; },
   get otps() { return getInstance().otps; },
-  get passwordResets() { return getInstance().passwordResets; }
+  get passwordResets() { return getInstance().passwordResets; },
+  get tasks() { return getInstance().tasks; }
 };
 
 module.exports = db;

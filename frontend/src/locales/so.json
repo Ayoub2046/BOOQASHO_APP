@@ -10,7 +10,8 @@
     "core": "Koor",
     "admin": "Maamulka",
     "account": "Akaun-ka",
-    "addVisit": "Diiwaangeli Booqasho"
+    "addVisit": "Diiwaangeli Booqasho",
+    "tasks": "Hawlaha Maalinlaha ah"
   },
   "roles": {
     "admin": "Maamulaha",

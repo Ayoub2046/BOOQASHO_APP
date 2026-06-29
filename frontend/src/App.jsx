@@ -9,6 +9,7 @@ import VisitForm from './pages/VisitForm';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Tasks from './pages/Tasks';
 import AppFooter from './components/AppFooter';
 
 export default function App() {
@@ -57,6 +58,7 @@ export default function App() {
       case 'add-visit': return <VisitForm setActivePage={handlePageChange} />;
       case 'users': return user.role === 'admin' ? <Users /> : <Dashboard setActivePage={handlePageChange} />;
       case 'reports': return user.role === 'admin' ? <Reports /> : <Dashboard setActivePage={handlePageChange} />;
+      case 'tasks': return <Tasks />;
       case 'settings': return <Settings />;
       default: return <Dashboard setActivePage={handlePageChange} />;
     }

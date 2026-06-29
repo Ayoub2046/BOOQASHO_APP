@@ -10,7 +10,8 @@
     "core": "Core",
     "admin": "Admin",
     "account": "Account",
-    "addVisit": "Log Visit"
+    "addVisit": "Log Visit",
+    "tasks": "Daily Tasks"
   },
   "roles": {
     "admin": "Administrator",

@@ -32,6 +32,7 @@ export default function Sidebar({ activePage, setActivePage, isOpen, onClose }) 
           <div className="sidebar-section-label">{t('nav.core')}</div>
           <div className="nav flex-column gap-1">
             {navItem('dashboard', 'bi bi-grid-1x2-fill', t('nav.dashboard'))}
+            {navItem('tasks', 'bi bi-check2-square', t('nav.tasks'))}
             {navItem('visits', 'bi bi-list-check', t('nav.visits'))}
             {user.role === 'marketing' && navItem('add-visit', 'bi bi-plus-circle-fill', t('nav.addVisit'))}
           </div>

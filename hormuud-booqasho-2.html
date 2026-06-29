@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Hormuud · Nidaamka Booqashada</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#F0F4F8;min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid #0055A4;outline-offset:1px}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#CBD5E0;border-radius:3px}
+.topbar{background:#0055A4;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;box-shadow:0 2px 8px rgba(0,0,0,.25);position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.logo{width:30px;height:30px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#0055A4;font-weight:900;font-size:13px}
+.topbar-right{display:flex;align-items:center;gap:12px;font-size:13px}
+.badge-admin{background:#FF6B35;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.btn-logout{background:rgba(255,255,255,.15);border:none;color:#fff;padding:5px 13px;border-radius:6px;font-size:13px}
+.layout{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:190px;background:#fff;border-right:1px solid #E2E8F0;padding:14px 0;flex-shrink:0}
+.nav-btn{width:100%;text-align:left;padding:10px 18px;border:none;background:transparent;color:#4A5568;font-size:14px;border-left:3px solid transparent;transition:all .15s}
+.nav-btn.active{background:#EBF4FF;color:#0055A4;font-weight:600;border-left-color:#0055A4}
+.main{flex:1;padding:22px;overflow:auto}
+.card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.client-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.client-card{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;border:1px solid #E2E8F0;transition:box-shadow .2s}
+.client-card:hover{box-shadow:0 4px 12px rgba(0,85,164,.15)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:7px 11px;text-align:left;color:#4A5568;font-weight:600;border-bottom:1px solid #E2E8F0;background:#F7FAFC;white-space:nowrap}
+td{padding:7px 11px;border-bottom:1px solid #F0F4F8;vertical-align:middle}
+.svc-tag{display:inline-block;color:#fff;font-size:10px;padding:2px 7px;border-radius:7px;font-weight:700;margin:1px}
+.svc-tag-lg{display:inline-block;color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;font-weight:700}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.row-flex{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.flex{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.page-title{margin:0 0 18px;color:#1A365D;font-size:19px}
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:#fff;border-radius:12px;padding:26px;width:92%;max-width:540px;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+/* Form */
+.lbl{font-size:12px;font-weight:600;color:#4A5568;display:block;margin-bottom:5px}
+.inp{width:100%;padding:8px 11px;border:1px solid #CBD5E0;border-radius:7px;font-size:13px;background:#fff}
+.inp-sm{padding:5px 9px;font-size:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.span2{grid-column:1/-1}
+.svc-picker{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#F7FAFC;border-radius:8px;border:1px solid #E2E8F0}
+.svc-pick-btn{border:1.5px solid #CBD5E0;background:#fff;color:#4A5568;padding:5px 12px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .15s;user-select:none}
+.svc-pick-btn.on{color:#fff}
+.svc-data-box{background:#EBF4FF;border-radius:8px;border:1px solid #BEE3F8;padding:14px;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.svc-data-row{background:#fff;border-radius:8px;padding:10px 14px}
+.svc-data-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.svc-data-fields.one{grid-template-columns:1fr}
+.visit-card{border:1px solid #E2E8F0;border-radius:8px;padding:11px 14px;background:#FAFAFA;margin-bottom:10px}
+.visit-svc-row{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-top:4px}
+/* Login */
+.login-wrap{min-height:100vh;background:linear-gradient(135deg,#0055A4,#003A7A);display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:14px;padding:40px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{width:56px;height:56px;background:#0055A4;border-radius:12px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px}
+.btn-primary{background:#0055A4;color:#fff;border:none;padding:8px 16px;border-radius:7px;font-weight:600;font-size:13px}
+.btn-success{background:#00A651;color:#fff;border:none;padding:7px 14px;border-radius:7px;font-weight:600;font-size:13px}
+.btn-danger{background:#E53E3E;color:#fff;border:none;padding:7px 12px;border-radius:7px;font-weight:600;font-size:13px}
+.btn-secondary{background:#fff;color:#4A5568;border:1px solid #CBD5E0;padding:8px 18px;border-radius:7px;font-size:14px}
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+.error-box{background:#FED7D7;color:#C53030;padding:8px 12px;border-radius:7px;font-size:13px;margin-bottom:14px}
+.empty{color:#A0AEC0;font-size:13px;padding:10px 0}
+.t-overflow{overflow-x:auto}
+/* Service data display in client detail */
+.svc-display-grid{display:flex;flex-wrap:wrap;gap:8px}
+.svc-display-item{background:#F7FAFC;border-radius:8px;padding:6px 10px;min-width:80px}
+/* visit input area */
+.visit-inp-area{background:#EBF4FF;border-radius:8px;border:1px solid #BEE3F8;padding:12px;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.visit-inp-row{display:flex;align-items:center;gap:10px}
+.new-svc-area{padding:12px;background:#F0FFF4;border-radius:8px;border:1px solid #C6F6D5;margin-bottom:14px}
+.rm-svc-area{padding:10px;background:#FFF5F5;border-radius:8px;border:1px solid #FED7D7;margin-bottom:14px}
+.new-svc-inputs{border-top:1px solid #C6F6D5;padding-top:10px;margin-top:10px;display:flex;flex-direction:column;gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const INIT_ENT_SVCS = ["BankAcc","MySMS","MyExam","Land line service","ADSL Plus","Call Center","Payroll","SMS API","Merchant","MMT","FiberOptic","FTTH","WTTX","P2MP","CRPT","MURABAHA","SHORT CODE","EvcAPI"];
+const INIT_IND_SVCS = ["EVCPlus","Anfac","Nasiye","Caawiye","Dhigaal","Dhanbaal","Keyd","MiFi","Aqoonmaal","LTE","ADSL","Deeqtoon","Ilawadaag","Waafi"];
+// Dynamic getters — always read from STATE so additions reflect immediately
+const ENT_SVCS = () => STATE.entSvcs||INIT_ENT_SVCS;
+const IND_SVCS = () => STATE.indSvcs||INIT_IND_SVCS;
+const ADMIN = {username:"admin",password:"admin123",role:"admin",name:"Administrator"};
+
+const SVC_FIELDS = {
+  BankAcc:[{k:"account",l:"Account Number"}], MySMS:[{k:"number",l:"SMS Number"}],
+  MyExam:[{k:"code",l:"Exam Code"}], "Land line service":[{k:"line",l:"Line Number"}],
+  "ADSL Plus":[{k:"username",l:"Username"},{k:"package",l:"Package"}],
+  "Call Center":[{k:"number",l:"Call Center Number"}], Payroll:[{k:"account",l:"Payroll Account"}],
+  "SMS API":[{k:"apiKey",l:"API Key"}], Merchant:[{k:"merchantId",l:"Merchant ID"}],
+  MMT:[{k:"number",l:"MMT Number"}], FiberOptic:[{k:"port",l:"Port Number"}],
+  FTTH:[{k:"number",l:"FTTH Number"}], WTTX:[{k:"number",l:"WTTX Number"}],
+  P2MP:[{k:"number",l:"P2MP Number"}], CRPT:[{k:"number",l:"CRPT Number"}],
+  MURABAHA:[{k:"account",l:"Account Number"}], "SHORT CODE":[{k:"code",l:"Short Code"}],
+  EvcAPI:[{k:"apiKey",l:"EvcAPI Key"}], EVCPlus:[{k:"number",l:"EVC Number"}],
+  Anfac:[{k:"number",l:"Anfac Number"}], Nasiye:[{k:"number",l:"Nasiye Number"}],
+  Caawiye:[{k:"number",l:"Caawiye Number"}], Dhigaal:[{k:"number",l:"Dhigaal Number"}],
+  Dhanbaal:[{k:"number",l:"Dhanbaal Number"}], Keyd:[{k:"number",l:"Keyd Number"}],
+  MiFi:[{k:"serial",l:"MiFi Serial"}], Aqoonmaal:[{k:"number",l:"Aqoonmaal Number"}],
+  LTE:[{k:"number",l:"LTE Number"}], ADSL:[{k:"username",l:"Username"}],
+  Deeqtoon:[{k:"number",l:"Deeqtoon Number"}], Ilawadaag:[{k:"number",l:"Ilawadaag Number"}],
+  Waafi:[{k:"number",l:"Waafi Number"}]
+};
+const SVC_COLORS = {
+  FTTH:"#0066CC",EvcAPI:"#00A651",MySMS:"#FF6B35",BankAcc:"#7B2D8B",
+  Payroll:"#C0392B",Merchant:"#E67E22",CRPT:"#1ABC9C",MMT:"#3498DB",
+  "Call Center":"#E74C3C","ADSL Plus":"#9B59B6",EVCPlus:"#00897B",
+  MURABAHA:"#5D4037","SHORT CODE":"#1565C0",FiberOptic:"#2E7D32"
+};
+const svcColor = s => SVC_COLORS[s]||"#607D8B";
+const genId = () => Date.now()+"-"+Math.random().toString(36).slice(2);
+const fmtDate = d => new Date(d).toLocaleDateString("so-SO",{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+
+// LS helpers
+const LS = {
+  get:(k,def)=>{try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):def;}catch{return def;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+};
+
+const INIT_ISPS = ["HORMUUD","SOMNET","GOLIS","TELESOM","AMTEL"];
+const INIT_CLIENTS = [{id:"c1",name:"Tanzil Travel Agency",phone:"619860009",contact:"BUULE CALI CABDI",employees:2,isp:"HORMUUD",type:"Enterprise",services:["BankAcc","MySMS","FTTH","EvcAPI"],svcData:{},visits:[]}];
+const INIT_USERS = [{id:"u1",name:"Ahmed Farah",username:"ahmed",password:"1234",role:"user"},{id:"u2",name:"Faadumo Hirsi",username:"faadumo",password:"1234",role:"user"}];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let STATE = {
+  session: LS.get("hm_session", null),
+  clients: LS.get("hm_clients", INIT_CLIENTS),
+  users:   LS.get("hm_users",   INIT_USERS),
+  isps:    LS.get("hm_isps",    INIT_ISPS),
+  entSvcs: LS.get("hm_ent_svcs", INIT_ENT_SVCS),
+  indSvcs: LS.get("hm_ind_svcs", INIT_IND_SVCS),
+  view:    "dashboard",
+  selClientId: null,
+  modal:   null,
+  loginErr: ""
+};
+
+function setState(patch){
+  Object.assign(STATE, typeof patch==="function" ? patch(STATE) : patch);
+  if(patch.clients!==undefined || (typeof patch==="function")) LS.set("hm_clients", STATE.clients);
+  if(patch.users!==undefined)   LS.set("hm_users",   STATE.users);
+  if(patch.isps!==undefined)    LS.set("hm_isps",    STATE.isps);
+  if(patch.entSvcs!==undefined) LS.set("hm_ent_svcs",STATE.entSvcs);
+  if(patch.indSvcs!==undefined) LS.set("hm_ind_svcs",STATE.indSvcs);
+  if(patch.session!==undefined) LS.set("hm_session", STATE.session);
+  render();
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+const h = (tag, attrs={}, ...children) => {
+  const el = document.createElement(tag);
+  for(const [k,v] of Object.entries(attrs)){
+    if(k==="className") el.className=v;
+    else if(k==="style" && typeof v==="object") Object.assign(el.style, v);
+    else if(k.startsWith("on")) el.addEventListener(k.slice(2).toLowerCase(), v);
+    else el.setAttribute(k,v);
+  }
+  for(const c of children.flat()){
+    if(c==null||c===false||c===undefined) continue;
+    el.appendChild(typeof c==="string"||typeof c==="number" ? document.createTextNode(c) : c);
+  }
+  return el;
+};
+const div  = (a,...c) => h("div",a,...c);
+const span = (a,...c) => h("span",a,...c);
+const btn  = (a,...c) => h("button",a,...c);
+const inp  = (a)      => h("input",a);
+const sel  = (a,...c) => h("select",a,...c);
+const opt  = (v,t)    => h("option",{value:v},t||v);
+const lbl  = (a,...c) => h("label",a,...c);
+const p    = (a,...c) => h("p",a,...c);
+const strong=(a,...c) => h("strong",a,...c);
+const table=(a,...c)  => h("table",a,...c);
+const thead=(a,...c)  => h("thead",a,...c);
+const tbody=(a,...c)  => h("tbody",a,...c);
+const tr   = (a,...c) => h("tr",a,...c);
+const th   = (a,...c) => h("th",a,...c);
+const td   = (a,...c) => h("td",a,...c);
+const textarea=(a)    => h("textarea",a);
+
+const statusBadge = s => {
+  const m={Active:{bg:"#C6F6D5",c:"#276749"},Pending:{bg:"#FEFCBF",c:"#744210"},Inactive:{bg:"#FED7D7",c:"#C53030"}};
+  const x=m[s]||{bg:"#EDF2F7",c:"#4A5568"};
+  return span({className:"badge",style:{background:x.bg,color:x.c}},s);
+};
+
+const svcTag = (s,lg) => {
+  const el = span({className:lg?"svc-tag-lg":"svc-tag",style:{background:svcColor(s)}},s);
+  return el;
+};
+
+// ═══════════════════════════════════════════
+// VIEWS
+// ═══════════════════════════════════════════
+
+function renderLogin(){
+  const uInp = inp({className:"inp",placeholder:"admin ama user",style:{marginBottom:"0"}});
+  const pInp = inp({type:"password",className:"inp",placeholder:"••••••"});
+  const errDiv = STATE.loginErr ? div({className:"error-box"},STATE.loginErr) : null;
+
+  const doLogin = () => {
+    const u=uInp.value.trim(), pw=pInp.value;
+    if(u===ADMIN.username&&pw===ADMIN.password){setState({session:ADMIN,loginErr:""});return;}
+    const usr=STATE.users.find(x=>x.username===u&&x.password===pw);
+    if(usr){
+      if(usr.active===false){setState({loginErr:"Akoonkaagu waa la joojiyay. Xiriir admin."});return;}
+      setState({session:usr,loginErr:""});return;
+    }
+    setState({loginErr:"Magaca ama furaha waa khalad"});
+  };
+  pInp.addEventListener("keydown",e=>e.key==="Enter"&&doLogin());
+
+  return div({className:"login-wrap"},
+    div({className:"login-box"},
+      div({style:{textAlign:"center",marginBottom:"28px"}},
+        div({className:"login-logo"},"H"),
+        div({style:{fontWeight:800,fontSize:"20px",color:"#1A365D"}},"Hormuud"),
+        div({style:{fontSize:"13px",color:"#718096",marginTop:"4px"}},"Nidaamka Booqashada")
+      ),
+      div({style:{marginBottom:"14px"}},
+        lbl({className:"lbl"},"Username"), uInp
+      ),
+      div({style:{marginBottom:"18px"}},
+        lbl({className:"lbl"},"Password"), pInp
+      ),
+      errDiv,
+      btn({className:"btn-primary",style:{width:"100%",padding:"10px",fontSize:"15px",fontWeight:"700",borderRadius:"8px"},onClick:doLogin},"Gal"),
+      div({style:{marginTop:"16px",fontSize:"11px",color:"#A0AEC0",textAlign:"center"}},"Admin: admin / admin123  ·  User: ahmed / 1234")
+    )
+  );
+}
+
+function renderDashboard(){
+  const {clients,users} = STATE;
+  const allVisits = clients.flatMap(c=>c.visits.map(v=>({...v,clientName:c.name,clientId:c.id,clientType:c.type})))
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  // ── Service usage count across all clients
+  const svcCount = {};
+  clients.forEach(c=>{
+    (c.services||[]).forEach(s=>{ svcCount[s]=(svcCount[s]||0)+1; });
+  });
+  const svcRanked = Object.entries(svcCount).sort((a,b)=>b[1]-a[1]);
+
+  // ── Clients with no visits (need visit)
+  const noVisit = clients.filter(c=>c.visits.length===0);
+
+  // ── This month visits
+  const now = new Date();
+  const thisMonth = allVisits.filter(v=>{
+    const d=new Date(v.date);
+    return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  });
+
+  // ── Active users count
+  const activeUsers = users.filter(u=>u.active!==false).length;
+
+  // Top stat cards
+  const stats=[
+    {label:"Macaamiisha Guud",    value:clients.length,            color:"#0055A4",icon:"\u{1F3E2}",
+      sub:"Enterprise "+clients.filter(c=>c.type==="Enterprise").length+" \xb7 Individual "+clients.filter(c=>c.type==="Individual").length},
+    {label:"Booqashooyinka Guud", value:allVisits.length,          color:"#00A651",icon:"\u{1F4CB}",
+      sub:"Bishaan: "+thisMonth.length},
+    {label:"Adeegyada Kala Duwan",value:svcRanked.length,          color:"#7B2D8B",icon:"\u{1F4E1}",
+      sub:"Ugu badan: "+(svcRanked[0]?svcRanked[0][0]+" ("+svcRanked[0][1]+")":"—")},
+    {label:"Macaamiil Aan La Booqan",value:noVisit.length,         color:"#E67E22",icon:"\u26A0\uFE0F",
+      sub:noVisit.length===0?"Dhammaan la booqay":"Baahan booqasho"},
+    {label:"Shaqaalaha Firfircoon",value:activeUsers,              color:"#1ABC9C",icon:"\u{1F465}",
+      sub:users.length+" guud"},
+  ];
+
+  const statCards = div({className:"stat-grid",style:{gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))"}},
+    ...stats.map(s=>
+      div({className:"stat-card",style:{borderTop:"3px solid "+s.color}},
+        div({style:{fontSize:"20px",marginBottom:"4px"}},s.icon),
+        div({style:{fontSize:"24px",fontWeight:"800",color:s.color}},s.value),
+        div({style:{fontSize:"12px",color:"#4A5568",fontWeight:"600",marginTop:"2px"}},s.label),
+        div({style:{fontSize:"11px",color:"#A0AEC0",marginTop:"2px"}},s.sub)
+      )
+    )
+  );
+
+  // ── Service breakdown chart (bar)
+  const maxVal = svcRanked.length>0?svcRanked[0][1]:1;
+  const svcBars = div({style:{display:"flex",flexDirection:"column",gap:"7px"}},
+    ...svcRanked.slice(0,12).map(([s,n])=>
+      div({style:{display:"flex",alignItems:"center",gap:"10px",cursor:"pointer"},
+        onClick:()=>{ /* filter future */ }},
+        div({style:{fontSize:"12px",fontWeight:"600",color:"#4A5568",width:"120px",flexShrink:"0",textAlign:"right",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},s),
+        div({style:{flex:"1",background:"#F0F4F8",borderRadius:"4px",height:"20px",overflow:"hidden"}},
+          div({style:{width:(n/maxVal*100)+"%",height:"100%",background:svcColor(s),borderRadius:"4px",transition:"width .4s",display:"flex",alignItems:"center",paddingLeft:"6px"}},
+            n>0?span({style:{fontSize:"11px",color:"#fff",fontWeight:"700"}},n):null
+          )
+        ),
+        div({style:{fontSize:"12px",color:"#718096",width:"30px",textAlign:"right"}},n)
+      )
+    )
+  );
+
+  // ── Enterprise vs Individual donut (CSS)
+  const entCount = clients.filter(c=>c.type==="Enterprise").length;
+  const indCount = clients.filter(c=>c.type==="Individual").length;
+  const total = entCount+indCount||1;
+  const entPct = Math.round(entCount/total*100);
+  const indPct = 100-entPct;
+  const donutEl = div({style:{display:"flex",flexDirection:"column",gap:"10px"}},
+    div({style:{position:"relative",width:"100px",height:"100px",margin:"0 auto"}},
+      div({style:{
+        width:"100px",height:"100px",borderRadius:"50%",
+        background:"conic-gradient(#0055A4 0% "+entPct+"%, #FF6B35 "+entPct+"% 100%)"
+      }}),
+      div({style:{position:"absolute",inset:"18px",borderRadius:"50%",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}},
+        div({style:{fontSize:"16px",fontWeight:"800",color:"#1A365D"}},total),
+        div({style:{fontSize:"9px",color:"#718096"}})
+      )
+    ),
+    div({style:{display:"flex",gap:"12px",justifyContent:"center",fontSize:"12px"}},
+      div({style:{display:"flex",alignItems:"center",gap:"4px"}},
+        div({style:{width:"10px",height:"10px",borderRadius:"2px",background:"#0055A4"}}),
+        "Enterprise ("+entCount+")"
+      ),
+      div({style:{display:"flex",alignItems:"center",gap:"4px"}},
+        div({style:{width:"10px",height:"10px",borderRadius:"2px",background:"#FF6B35"}}),
+        "Individual ("+indCount+")"
+      )
+    )
+  );
+
+  // ── Clients needing visit (alert section)
+  const noVisitCards = noVisit.length===0
+    ? p({className:"empty",style:{color:"#00A651"}},"\u2705 Dhammaan macaamiisha la booqay!")
+    : div({style:{display:"flex",flexDirection:"column",gap:"8px"}},
+        ...noVisit.slice(0,5).map(c=>
+          div({style:{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px",background:"#FFFBEB",border:"1px solid #FCD34D",borderRadius:"8px",cursor:"pointer"},
+            onClick:()=>setState({selClientId:c.id,view:"clientDetail"})},
+            div({},
+              div({style:{fontWeight:"600",fontSize:"13px",color:"#1A365D"}},c.name),
+              div({style:{fontSize:"11px",color:"#718096"}},c.type+" \xb7 "+c.phone)
+            ),
+            span({style:{background:"#FCD34D",color:"#92400E",fontSize:"10px",padding:"2px 8px",borderRadius:"8px",fontWeight:"700"}},"BOOQO")
+          )
+        ),
+        noVisit.length>5?div({style:{fontSize:"12px",color:"#718096",textAlign:"center",marginTop:"4px"}},
+          "+"+(noVisit.length-5)+" kale"
+        ):null
+      );
+
+  // ── Recent visits table
+  const visitRows = allVisits.slice(0,8).map(v=>
+    tr({},
+      td({style:{color:"#0055A4",fontWeight:"500",cursor:"pointer"},onClick:()=>{
+        const c=STATE.clients.find(x=>x.id===v.clientId);
+        if(c) setState({selClientId:c.id,view:"clientDetail"});
+      }},v.clientName),
+      td({},span({style:{background:v.clientType==="Enterprise"?"#EBF4FF":"#F0FFF4",color:v.clientType==="Enterprise"?"#0055A4":"#276749",fontSize:"10px",padding:"1px 6px",borderRadius:"7px",fontWeight:"600"}},v.clientType)),
+      td({style:{color:"#4A5568"}},v.agent),
+      td({style:{color:"#718096",whiteSpace:"nowrap"}},fmtDate(v.date)),
+      td({},statusBadge(v.status))
+    )
+  );
+
+  return div({},
+    h("h2",{className:"page-title"},"📊 Dashboard"),
+
+    // Stat cards row
+    statCards,
+
+    // Middle row: service chart + donut + alert
+    div({style:{display:"grid",gridTemplateColumns:"1fr 160px 1fr",gap:"16px",marginBottom:"18px"}},
+
+      // Left: Service usage
+      div({className:"card"},
+        h("h3",{style:{margin:"0 0 14px",fontSize:"14px",color:"#2D3748"}},"\u{1F4E1} Adeegyada — Macaamiisha Haystaan"),
+        svcRanked.length===0?p({className:"empty"},"Xog ma jirto"):svcBars
+      ),
+
+      // Middle: Type donut
+      div({className:"card",style:{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}},
+        h("h3",{style:{margin:"0 0 14px",fontSize:"13px",color:"#2D3748",textAlign:"center"}},"Nooca"),
+        donutEl
+      ),
+
+      // Right: Needs visit alert
+      div({className:"card"},
+        h("h3",{style:{margin:"0 0 12px",fontSize:"14px",color:"#2D3748"}},"\u26A0\uFE0F Macaamiil Aan La Booqin"),
+        noVisitCards
+      )
+    ),
+
+    // Recent visits
+    div({className:"card"},
+      h("h3",{style:{margin:"0 0 12px",fontSize:"14px",color:"#2D3748"}},"\u{1F550} Booqashooyinkii Ugu Dambeeyey"),
+      allVisits.length===0
+        ? p({className:"empty"},"Wali booqasho lama samayn")
+        : div({className:"t-overflow"},
+            table({},
+              thead({},tr({},...["Macmiil","Nooc","Agent","Taariikhda","Xaalada"].map(hh=>th({},hh)))),
+              tbody({},...visitRows)
+            )
+          )
+    )
+  );
+}
+
+function renderClients(){
+  const cards = STATE.clients.map(c=>
+    div({className:"client-card",onClick:()=>setState({selClientId:c.id,view:"clientDetail"})},
+      div({className:"row-flex",style:{marginBottom:"6px"}},
+        div({style:{fontWeight:"700",color:"#1A365D",fontSize:"14px"}},c.name),
+        span({style:{background:c.type==="Enterprise"?"#EBF4FF":"#F0FFF4",color:c.type==="Enterprise"?"#0055A4":"#276749",fontSize:"10px",padding:"2px 7px",borderRadius:"9px",fontWeight:"600"}},c.type)
+      ),
+      div({style:{fontSize:"12px",color:"#718096",marginBottom:"3px"}},`📞 ${c.phone} · ${c.contact}`),
+      div({style:{fontSize:"12px",color:"#718096",marginBottom:"9px"}},`📡 ${c.isp} · 👥 ${c.employees} shaqaale`),
+      div({className:"flex",style:{marginBottom:"8px"}},
+        ...c.services.slice(0,5).map(s=>svcTag(s)),
+        ...(c.services.length>5?[span({style:{fontSize:"10px",color:"#718096"}},`+${c.services.length-5}`)]: [])
+      ),
+      div({style:{fontSize:"11px",color:"#A0AEC0"}},`📋 ${c.visits.length} booqasho`)
+    )
+  );
+
+  return div({},
+    div({className:"row-flex",style:{marginBottom:"18px"}},
+      h("h2",{className:"page-title",style:{margin:0}},"🏢 Macaamiisha"),
+      btn({className:"btn-primary",onClick:()=>setState({modal:"addClient"})},"+ Macmiil Cusub")
+    ),
+    STATE.clients.length===0
+      ? p({className:"empty"},"Wali macmiil lama darin")
+      : div({className:"client-grid"},...cards)
+  );
+}
+
+function renderClientDetail(){
+  const c = STATE.clients.find(x=>x.id===STATE.selClientId);
+  if(!c) return div({},"Client not found");
+  const isAdmin = STATE.session?.role==="admin";
+
+  const svcItems = c.services.length===0
+    ? [p({className:"empty"},"Adeeg ma laha")]
+    : c.services.map(s=>{
+        const data=c.svcData?.[s];
+        const num=data?Object.values(data).filter(Boolean).join(" · "):null;
+        return div({className:"svc-display-item",style:{border:`1.5px solid ${svcColor(s)}44`}},
+          svcTag(s,true),
+          num?div({style:{fontSize:"11px",color:"#4A5568",marginTop:"3px"}},num):null
+        );
+      });
+
+  const visitCards = [...c.visits].reverse().map(v=>
+    div({className:"visit-card"},
+      div({className:"row-flex",style:{marginBottom:"5px"}},
+        div({style:{fontWeight:"600",color:"#2D3748",fontSize:"13px"}},`👤 ${v.agent}`),
+        div({className:"flex"},statusBadge(v.status),span({style:{fontSize:"11px",color:"#A0AEC0"}},fmtDate(v.date)))
+      ),
+      v.notes?div({style:{fontSize:"13px",color:"#4A5568",marginBottom:"4px"}},v.notes):null,
+      v.newServices?.length>0?div({className:"visit-svc-row"},
+        span({style:{fontSize:"11px",color:"#718096"}},"Cusub: "),
+        ...v.newServices.map(s=>span({style:{background:"#C6F6D5",color:"#276749",fontSize:"11px",padding:"1px 6px",borderRadius:"6px",fontWeight:"600"}},
+          `+${s}${v.serviceNumbers?.[s]?" ("+v.serviceNumbers[s]+")":""}`))
+      ):null,
+      v.removedServices?.length>0?div({className:"visit-svc-row"},
+        span({style:{fontSize:"11px",color:"#718096"}},"Joojiyay: "),
+        ...v.removedServices.map(s=>span({style:{background:"#FED7D7",color:"#C53030",fontSize:"11px",padding:"1px 6px",borderRadius:"6px",fontWeight:"600"}},`-${s}`))
+      ):null
+    )
+  );
+
+  return div({},
+    btn({style:{background:"none",border:"none",color:"#0055A4",fontSize:"13px",padding:"0",marginBottom:"14px"},
+      onClick:()=>setState({view:"clients",selClientId:null})},"← Macaamiisha"),
+    div({className:"card",style:{marginBottom:"18px"}},
+      div({className:"row-flex",style:{marginBottom:"14px"}},
+        div({},
+          div({className:"flex",style:{marginBottom:"5px"}},
+            h("h2",{style:{margin:0,color:"#1A365D",fontSize:"20px"}},c.name),
+            span({style:{background:c.type==="Enterprise"?"#EBF4FF":"#F0FFF4",color:c.type==="Enterprise"?"#0055A4":"#276749",fontSize:"11px",padding:"3px 9px",borderRadius:"9px",fontWeight:"700"}},c.type)
+          ),
+          div({className:"flex",style:{fontSize:"13px",color:"#718096"}},
+            `📞 ${c.phone}`,span({}," · "),`👤 ${c.contact}`,span({}," · "),`📡 ${c.isp}`,span({}," · "),`👥 ${c.employees} shaqaale`
+          )
+        ),
+        div({className:"flex"},
+          btn({className:"btn-success",onClick:()=>setState({modal:"addVisit"})},"+ Booqasho"),
+          isAdmin?btn({className:"btn-primary",onClick:()=>setState({modal:"editClient"})},"✏️ Beddel"):null,
+          isAdmin?btn({className:"btn-danger",onClick:()=>{if(confirm("Macmiilka tirtir?")){setState(s=>{const cl=s.clients.filter(x=>x.id!==c.id);return{clients:cl,view:"clients",selClientId:null};});}}},"🗑️"):null
+        )
+      ),
+      div({},
+        div({style:{fontSize:"13px",color:"#4A5568",fontWeight:"600",marginBottom:"8px"}},"Adeegyada La Hayo:"),
+        div({className:"svc-display-grid"},...svcItems)
+      )
+    ),
+    div({className:"card"},
+      h("h3",{style:{margin:"0 0 12px",fontSize:"14px",color:"#2D3748"}},`📋 Booqashooyinkii (${c.visits.length})`),
+      c.visits.length===0?p({className:"empty"},"Booqasho lama samayn"):div({},...visitCards)
+    )
+  );
+}
+
+function renderVisits(){
+  const allVisits = STATE.clients.flatMap(c=>c.visits.map(v=>({...v,clientName:c.name,clientId:c.id,clientType:c.type})))
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  return div({},
+    h("h2",{className:"page-title"},"📋 Dhammaan Booqashooyinka"),
+    div({className:"card"},
+      allVisits.length===0?p({className:"empty"},"Wali booqasho lama samayn"):
+      div({className:"t-overflow"},
+        table({},
+          thead({},tr({},...["Macmiil","Nooc","Agent","Taariikhda","Xaalada","Adeeg Cusub","Faallo"].map(hh=>th({},hh)))),
+          tbody({},...allVisits.map(v=>tr({},
+            td({style:{color:"#0055A4",fontWeight:"500",cursor:"pointer"},onClick:()=>{
+              const c=STATE.clients.find(x=>x.id===v.clientId);if(c)setState({selClientId:c.id,view:"clientDetail"});
+            }},v.clientName),
+            td({},span({style:{background:v.clientType==="Enterprise"?"#EBF4FF":"#F0FFF4",color:v.clientType==="Enterprise"?"#0055A4":"#276749",fontSize:"11px",padding:"1px 7px",borderRadius:"8px",fontWeight:"600"}},v.clientType)),
+            td({style:{color:"#4A5568"}},v.agent),
+            td({style:{color:"#718096",whiteSpace:"nowrap"}},fmtDate(v.date)),
+            td({},statusBadge(v.status)),
+            td({},...(v.newServices||[]).map(s=>span({style:{background:"#C6F6D5",color:"#276749",fontSize:"10px",padding:"1px 5px",borderRadius:"5px",fontWeight:"600",marginRight:"2px"}},`+${s}`))),
+            td({style:{color:"#718096",maxWidth:"160px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},v.notes||"")
+          )))
+        )
+      )
+    )
+  );
+}
+
+function renderUsers(){
+  const {users} = STATE;
+  const rows = users.map(u=>{
+    const isActive = u.active !== false;
+    return tr({style:{opacity:isActive?"1":"0.55"}},
+      td({style:{fontWeight:"500"}},
+        u.name,
+        !isActive?span({style:{fontSize:"10px",background:"#FED7D7",color:"#C53030",padding:"1px 6px",borderRadius:"8px",marginLeft:"8px",fontWeight:"700"}},"JOOJIYAY"):null
+      ),
+      td({style:{color:"#718096"}},u.username),
+      td({},span({className:"badge",style:{background:"#EBF4FF",color:"#0055A4"}},"USER")),
+      td({},
+        div({className:"flex",style:{justifyContent:"flex-end",gap:"6px"}},
+          btn({style:{background:"#0055A4",color:"#fff",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"12px",fontWeight:"600"},
+            onClick:()=>setState({modal:"editUser",selUserId:u.id})},"Beddel"),
+          btn({style:{background:isActive?"#E67E22":"#00A651",color:"#fff",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"12px",fontWeight:"600"},
+            onClick:()=>{
+              if(confirm(isActive?"User jooji?":"User dib u shaqalisi?")){
+                setState(s=>({users:s.users.map(x=>x.id===u.id?{...x,active:!isActive}:x)}));
+              }
+            }},isActive?"Jooji":"Shaqalisi"),
+          btn({style:{background:"#E53E3E",color:"#fff",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"12px",fontWeight:"600"},
+            onClick:()=>{
+              if(confirm("User tirtir?")){
+                setState(s=>({users:s.users.filter(x=>x.id!==u.id)}));
+              }
+            }},"Tirtir")
+        )
+      )
+    );
+  });
+  const activeCount = users.filter(u=>u.active!==false).length;
+  const inactiveCount = users.filter(u=>u.active===false).length;
+  return div({},
+    div({className:"row-flex",style:{marginBottom:"18px"}},
+      h("h2",{className:"page-title",style:{margin:0}},"👥 Isticmaalayaasha"),
+      div({className:"flex"},
+        span({style:{fontSize:"13px",color:"#718096"}},"✅ "+activeCount+" firfircoon · ⏸ "+inactiveCount+" joojiyay"),
+        btn({className:"btn-primary",onClick:()=>setState({modal:"addUser"})},"+ User Cusub")
+      )
+    ),
+    div({className:"card"},
+      table({},
+        thead({},tr({},...["Magac","Username","Role","Ficilada"].map(hh=>th({},hh)))),
+        tbody({},
+          tr({},
+            td({style:{fontWeight:"600"}},"Administrator"),
+            td({style:{color:"#718096"}},"admin"),
+            td({},span({className:"badge",style:{background:"#FFF3CD",color:"#856404"}},"ADMIN")),
+            td({style:{color:"#A0AEC0",fontSize:"12px"}},"(Ma beddeli karo)")
+          ),
+          ...rows
+        )
+      )
+    )
+  );
+}
+
+// ═══════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════
+
+function buildSvcPicker(type, selected, svcData, onChange, onDataChange){
+  const list = type==="Enterprise"?ENT_SVCS():IND_SVCS();
+  const wrap = div({className:"svc-picker"});
+  const dataWrap = div({className:"svc-data-box",style:{display:selected.size>0?"flex":"none"}});
+
+  const rebuildDataWrap = () => {
+    dataWrap.innerHTML="";
+    dataWrap.style.display=selected.size>0?"flex":"none";
+    dataWrap.style.marginTop="0";
+    [...selected].forEach(s=>{
+      const fields=SVC_FIELDS[s]||[{k:"number",l:"Number/Account"}];
+      const row=div({className:"svc-data-row",style:{border:`1.5px solid ${svcColor(s)}33`}},
+        span({style:{background:svcColor(s),color:"#fff",fontSize:"11px",padding:"3px 10px",borderRadius:"6px",fontWeight:"700",display:"inline-block",marginBottom:"8px"}},s)
+      );
+      const grid=div({className:fields.length>1?"svc-data-fields":"svc-data-fields one"});
+      fields.forEach(f=>{
+        const fieldDiv=div({});
+        const fieldLbl=lbl({className:"lbl"},f.l);
+        const fieldInp=inp({className:"inp",style:{fontSize:"13px",padding:"6px 10px"},placeholder:`Geli ${f.l}...`,value:(svcData[s]?.[f.k])||""});
+        fieldInp.addEventListener("input",e=>{
+          if(!svcData[s])svcData[s]={};
+          svcData[s][f.k]=e.target.value;
+          onDataChange(svcData);
+        });
+        fieldDiv.appendChild(fieldLbl);
+        fieldDiv.appendChild(fieldInp);
+        grid.appendChild(fieldDiv);
+      });
+      row.appendChild(grid);
+      dataWrap.appendChild(row);
+    });
+  };
+
+  list.forEach(s=>{
+    const b=btn({className:"svc-pick-btn"+(selected.has(s)?" on":""),
+      style:{background:selected.has(s)?svcColor(s):"#fff",color:selected.has(s)?"#fff":"#4A5568",borderColor:selected.has(s)?svcColor(s):"#CBD5E0"}},
+      (selected.has(s)?"✓ ":"")+s);
+    b.addEventListener("click",()=>{
+      if(selected.has(s)){selected.delete(s);if(svcData[s])delete svcData[s];}
+      else selected.add(s);
+      b.className="svc-pick-btn"+(selected.has(s)?" on":"");
+      b.style.background=selected.has(s)?svcColor(s):"#fff";
+      b.style.color=selected.has(s)?"#fff":"#4A5568";
+      b.style.borderColor=selected.has(s)?svcColor(s):"#CBD5E0";
+      b.textContent=(selected.has(s)?"✓ ":"")+s;
+      onChange(selected);
+      rebuildDataWrap();
+    });
+    wrap.appendChild(b);
+  });
+  // "+" button to add new service inline
+  const addSvcRow = div({style:{display:"none",gap:"6px",alignItems:"center",width:"100%",marginTop:"4px"}});
+  const addSvcInp = inp({className:"inp",placeholder:"Adeegga magaciisa (e.g. MyService)...",style:{flex:"1"}});
+  const addSvcBtn = btn({className:"btn-primary",style:{flexShrink:"0",fontSize:"12px",padding:"5px 10px"},onClick:()=>{
+    const v = addSvcInp.value.trim();
+    if(!v){alert("Magaca buuxi");return;}
+    const key = type==="Enterprise"?"entSvcs":"indSvcs";
+    const curList = type==="Enterprise"?ENT_SVCS():IND_SVCS();
+    if(curList.includes(v)){alert("Adeeggan hore ayuu ku jiray!");return;}
+    // Add to STATE permanently
+    setState(s=>({[key]:[...( s[key]||(type==="Enterprise"?INIT_ENT_SVCS:INIT_IND_SVCS)),v]}));
+    // Add button to picker immediately
+    const newB = btn({className:"svc-pick-btn",style:{background:"#fff",color:"#4A5568",borderColor:"#CBD5E0"}},v);
+    newB.addEventListener("click",()=>{
+      if(selected.has(v)){selected.delete(v);if(svcData[v])delete svcData[v];}
+      else selected.add(v);
+      newB.className="svc-pick-btn"+(selected.has(v)?" on":"");
+      newB.style.background=selected.has(v)?svcColor(v):"#fff";
+      newB.style.color=selected.has(v)?"#fff":"#4A5568";
+      newB.style.borderColor=selected.has(v)?svcColor(v):"#CBD5E0";
+      newB.textContent=(selected.has(v)?"\u2713 ":"")+v;
+      onChange(selected);
+      rebuildDataWrap();
+    });
+    wrap.insertBefore(newB, addBtn);
+    addSvcInp.value="";
+    addSvcRow.style.display="none";
+  }},"+ Ku Dar");
+  addSvcRow.appendChild(addSvcInp);
+  addSvcRow.appendChild(addSvcBtn);
+
+  // Toggle button
+  const addBtn = btn({style:{
+    border:"1.5px dashed #CBD5E0",background:"transparent",color:"#718096",
+    padding:"5px 12px",borderRadius:"8px",fontSize:"12px",cursor:"pointer",
+    width:"100%",marginTop:"6px"
+  },"onClick":()=>{
+    addSvcRow.style.display = addSvcRow.style.display==="none"?"flex":"none";
+    if(addSvcRow.style.display!=="none") addSvcInp.focus();
+  }},"+ Adeeg Cusub Ku Dar");
+  addSvcInp.addEventListener("keydown",e=>{ if(e.key==="Enter") addSvcBtn.click(); });
+
+  wrap.appendChild(addBtn);
+  wrap.appendChild(addSvcRow);
+
+  rebuildDataWrap();
+  return {picker:wrap,dataBox:dataWrap};
+}
+
+function renderClientForm(initial, isEdit, onSave, onClose){
+  let type=initial?.type||"Enterprise";
+  let name=initial?.name||"";
+  let phone=initial?.phone||"";
+  let contact=initial?.contact||"";
+  let employees=initial?.employees||1;
+  let isp=initial?.isp||"HORMUUD";
+  let selected=new Set(initial?.services||[]);
+  let svcData=JSON.parse(JSON.stringify(initial?.svcData||{}));
+
+  const nameInp=inp({className:"inp",value:name}); nameInp.addEventListener("input",e=>name=e.target.value);
+  const phoneInp=inp({className:"inp",value:phone}); phoneInp.addEventListener("input",e=>phone=e.target.value);
+  const contactInp=inp({className:"inp",value:contact}); contactInp.addEventListener("input",e=>contact=e.target.value);
+  const empInp=inp({type:"number",className:"inp",min:"0",value:employees}); empInp.addEventListener("input",e=>employees=e.target.value);
+  // ISP selector + inline "add new" option
+  const ispWrap = div({style:{display:"flex",flexDirection:"column",gap:"6px"}});
+  const newIspRow = div({style:{display:"none",gap:"6px",alignItems:"center"}});
+
+  const buildIspSel = () => {
+    const s = sel({className:"inp"});
+    STATE.isps.forEach(x=>s.appendChild(opt(x)));
+    // special "+ Shirkad Cusub" option
+    const addOpt = h("option",{value:"__new__"},"+ Shirkad Cusub Ku Dar...");
+    s.appendChild(addOpt);
+    s.value = STATE.isps.includes(isp) ? isp : (STATE.isps[0]||"");
+    isp = s.value;
+    s.addEventListener("change", e => {
+      if(e.target.value === "__new__") {
+        newIspRow.style.display = "flex";
+        newIspInp.focus();
+        // revert selection to previous
+        s.value = isp;
+      } else {
+        isp = e.target.value;
+        newIspRow.style.display = "none";
+      }
+    });
+    return s;
+  };
+  let ispSel = buildIspSel();
+
+  const newIspInp = inp({className:"inp",placeholder:"Magaca shirkadda (e.g. AMTEL)...",style:{flex:"1",textTransform:"uppercase"}});
+  const newIspBtn = btn({className:"btn-primary",style:{flexShrink:"0",whiteSpace:"nowrap"},onClick:()=>{
+    const v = newIspInp.value.trim().toUpperCase();
+    if(!v){alert("Magaca buuxi");return;}
+    if(STATE.isps.includes(v)){alert("Shirkaddan hore ayey ku jireen!");return;}
+    setState(s=>({isps:[...s.isps,v]}));
+    isp = v;
+    // rebuild select
+    const newSel = buildIspSel();
+    newSel.value = v;
+    isp = v;
+    ispWrap.replaceChild(newSel, ispSel);
+    ispSel = newSel;
+    newIspInp.value = "";
+    newIspRow.style.display = "none";
+  }},"+ Ku Dar");
+
+  newIspRow.appendChild(newIspInp);
+  newIspRow.appendChild(newIspBtn);
+  ispWrap.appendChild(ispSel);
+  ispWrap.appendChild(newIspRow);
+
+  const svcLblDiv=div({},lbl({className:"lbl"},`Adeegyada (${type})`));
+  const {picker,dataBox}=buildSvcPicker(type,selected,svcData,()=>{},d=>svcData=d);
+  const pickerWrap=div({style:{marginBottom:"12px"}},svcLblDiv,picker);
+
+  const radioDiv=div({className:"flex"});
+  ["Enterprise","Individual"].forEach(t=>{
+    const rb=inp({type:"radio",name:"ctype",value:t});
+    rb.checked=t===type;
+    rb.addEventListener("change",()=>{
+      type=t; selected=new Set(); svcData={};
+      svcLblDiv.innerHTML=""; svcLblDiv.appendChild(lbl({className:"lbl"},`Adeegyada (${type})`));
+      const {picker:np,dataBox:nd}=buildSvcPicker(type,selected,svcData,()=>{},d=>svcData=d);
+      pickerWrap.replaceChild(np,pickerWrap.children[1]);
+      dataBox.replaceWith(nd);
+    });
+    radioDiv.appendChild(lbl({style:{display:"flex",alignItems:"center",gap:"6px",cursor:"pointer",fontSize:"14px"}},rb,t));
+  });
+
+  return div({className:"modal"},
+    h("h3",{style:{margin:"0 0 20px",color:"#1A365D"}},isEdit?"✏️ Wax Beddel":"➕ Macmiil Cusub"),
+    div({className:"form-grid"},
+      div({className:"span2"},lbl({className:"lbl"},"Nooca"),radioDiv),
+      div({className:"span2"},lbl({className:"lbl"},"Magaca Ganacsiga"),nameInp),
+      div({},lbl({className:"lbl"},"Telefoon"),phoneInp),
+      div({},lbl({className:"lbl"},"Contact Person"),contactInp),
+      div({},lbl({className:"lbl"},"ISP"),ispWrap),
+      div({},lbl({className:"lbl"},"Shaqaalaha"),empInp)
+    ),
+    pickerWrap,
+    dataBox,
+    div({className:"btn-row"},
+      btn({className:"btn-secondary",onClick:onClose},"Jooji"),
+      btn({className:"btn-primary",onClick:()=>{
+        if(!nameInp.value||!phoneInp.value)return alert("Magaca iyo telefoonka buuxi");
+        onSave({name:nameInp.value,phone:phoneInp.value,contact:contactInp.value,
+          employees:Number(empInp.value),isp:ispSel.value,type,services:[...selected],svcData});
+      }},"Keydi")
+    )
+  );
+}
+
+function renderVisitForm(client, onSave, onClose){
+  let status="Active";
+  let notes="";
+  let newSvcs=new Set();
+  let rmSvcs=new Set();
+  let svcNumbers={};
+
+  const allSvcs=client.type==="Enterprise"?ENT_SVCS():IND_SVCS();
+  const notHas=allSvcs.filter(s=>!client.services.includes(s));
+  const hasAlready=client.services;
+
+  const statusSel=sel({className:"inp",style:{marginBottom:"14px"}},opt("Active"),opt("Pending"),opt("Inactive"));
+  statusSel.addEventListener("change",e=>status=e.target.value);
+
+  // existing services number inputs
+  const existingArea=div({className:"visit-inp-area"},
+    lbl({className:"lbl"},"Adeegyada Jira — Number/Account"),
+    ...hasAlready.map(s=>{
+      const i=inp({className:"inp inp-sm",style:{flex:"1"},placeholder:`Numberka ${s}...`});
+      i.addEventListener("input",e=>svcNumbers[s]=e.target.value);
+      return div({className:"visit-inp-row"},
+        span({className:"svc-tag-lg",style:{background:svcColor(s),minWidth:"90px",textAlign:"center"}},s),i
+      );
+    })
+  );
+
+  // new services picker
+  const newInputsDiv=div({className:"new-svc-inputs",style:{display:"none"}});
+  const rebuildNewInputs=()=>{
+    newInputsDiv.innerHTML="";
+    newInputsDiv.style.display=newSvcs.size>0?"flex":"none";
+    [...newSvcs].forEach(s=>{
+      const i=inp({className:"inp inp-sm",style:{flex:"1"},placeholder:`Numberka ${s}...`});
+      i.value=svcNumbers[s]||"";
+      i.addEventListener("input",e=>svcNumbers[s]=e.target.value);
+      newInputsDiv.appendChild(div({className:"visit-inp-row"},
+        span({className:"svc-tag-lg",style:{background:svcColor(s),minWidth:"90px",textAlign:"center"}},s),i
+      ));
+    });
+  };
+
+  const newPickerDiv=div({className:"flex",style:{flexWrap:"wrap",gap:"6px",marginBottom:"0"}});
+  notHas.forEach(s=>{
+    const b=btn({style:{background:"#fff",color:"#4A5568",border:"1px solid #CBD5E0",padding:"4px 10px",borderRadius:"6px",fontSize:"12px",transition:"all .15s",userSelect:"none"}},`+${s}`);
+    b.addEventListener("click",()=>{
+      if(newSvcs.has(s)){newSvcs.delete(s);delete svcNumbers[s];}else newSvcs.add(s);
+      b.style.background=newSvcs.has(s)?svcColor(s):"#fff";
+      b.style.color=newSvcs.has(s)?"#fff":"#4A5568";
+      b.style.borderColor=newSvcs.has(s)?svcColor(s):"#CBD5E0";
+      b.textContent=(newSvcs.has(s)?`✓ +`:"+`")+s;
+      rebuildNewInputs();
+    });
+    newPickerDiv.appendChild(b);
+  });
+
+  // remove services
+  const rmPickerDiv=div({className:"flex",style:{flexWrap:"wrap",gap:"6px"}});
+  hasAlready.forEach(s=>{
+    const b=btn({style:{background:"#fff",color:"#4A5568",border:"1px solid #CBD5E0",padding:"3px 9px",borderRadius:"6px",fontSize:"12px",userSelect:"none"}},`-${s}`);
+    b.addEventListener("click",()=>{
+      if(rmSvcs.has(s))rmSvcs.delete(s);else rmSvcs.add(s);
+      b.style.background=rmSvcs.has(s)?"#E53E3E":"#fff";
+      b.style.color=rmSvcs.has(s)?"#fff":"#4A5568";
+      b.style.borderColor=rmSvcs.has(s)?"#E53E3E":"#CBD5E0";
+    });
+    rmPickerDiv.appendChild(b);
+  });
+
+  const notesTA=textarea({className:"inp",style:{height:"70px",resize:"vertical"},placeholder:"Wax faallo ah..."});
+  notesTA.addEventListener("input",e=>notes=e.target.value);
+
+  return div({className:"modal"},
+    h("h3",{style:{margin:"0 0 6px",color:"#1A365D"}},"📋 Booqasho Cusub"),
+    div({style:{fontSize:"13px",color:"#718096",marginBottom:"18px"}},`Macmiil: `,strong({style:{color:"#0055A4"}},client.name)),
+    lbl({className:"lbl"},"Xaalada Macmiilka"),
+    statusSel,
+    hasAlready.length>0?existingArea:null,
+    notHas.length>0?div({className:"new-svc-area"},
+      lbl({className:"lbl",style:{marginBottom:"8px"}},"Adeeg Cusub (Macmiilka Rabaa)"),
+      newPickerDiv,
+      newInputsDiv
+    ):null,
+    hasAlready.length>0?div({className:"rm-svc-area"},
+      lbl({className:"lbl",style:{marginBottom:"8px"}},"Adeeg La Joojiyay"),
+      rmPickerDiv
+    ):null,
+    div({style:{marginBottom:"16px"}},lbl({className:"lbl"},"Faallo / Notes"),notesTA),
+    div({className:"btn-row"},
+      btn({className:"btn-secondary",onClick:onClose},"Jooji"),
+      btn({className:"btn-success",onClick:()=>onSave({status,notes,newServices:[...newSvcs],removedServices:[...rmSvcs],serviceNumbers:svcNumbers})},"Keydi Booqashada")
+    )
+  );
+}
+
+function renderUserForm(onSave,onClose){
+  const nInp=inp({className:"inp",placeholder:"Magaca buuxa"});
+  const uInp=inp({className:"inp",placeholder:"username"});
+  const pInp=inp({type:"password",className:"inp",placeholder:"password"});
+  return div({className:"modal"},
+    h("h3",{style:{margin:"0 0 20px",color:"#1A365D"}},"👤 User Cusub"),
+    div({style:{marginBottom:"12px"}},lbl({className:"lbl"},"Magaca Buuxa"),nInp),
+    div({style:{marginBottom:"12px"}},lbl({className:"lbl"},"Username"),uInp),
+    div({style:{marginBottom:"20px"}},lbl({className:"lbl"},"Password"),pInp),
+    div({className:"btn-row"},
+      btn({className:"btn-secondary",onClick:onClose},"Jooji"),
+      btn({className:"btn-primary",onClick:()=>{
+        if(!nInp.value||!uInp.value||!pInp.value)return alert("Buuxi dhammaan");
+        onSave({name:nInp.value,username:uInp.value,password:pInp.value,active:true});
+      }},"Keydi")
+    )
+  );
+}
+
+function renderEditUserForm(user, onSave, onClose){
+  const nInp=inp({className:"inp",value:user.name});
+  const uInp=inp({className:"inp",value:user.username});
+  const pInp=inp({type:"password",className:"inp",placeholder:"Banaan waa la dhigaa — kuma beddelin"});
+  return div({className:"modal"},
+    h("h3",{style:{margin:"0 0 6px",color:"#1A365D"}},"User Beddel"),
+    div({style:{fontSize:"13px",color:"#718096",marginBottom:"18px"}},"User: ",span({style:{fontWeight:"600",color:"#0055A4"}},user.name)),
+    div({style:{marginBottom:"12px"}},lbl({className:"lbl"},"Magaca Buuxa"),nInp),
+    div({style:{marginBottom:"12px"}},lbl({className:"lbl"},"Username"),uInp),
+    div({style:{marginBottom:"20px"}},lbl({className:"lbl"},"Password Cusub (optional)"),pInp),
+    div({className:"btn-row"},
+      btn({className:"btn-secondary",onClick:onClose},"Jooji"),
+      btn({className:"btn-primary",onClick:()=>{
+        if(!nInp.value||!uInp.value)return alert("Magaca iyo username buuxi");
+        const upd={name:nInp.value,username:uInp.value};
+        if(pInp.value.trim()) upd.password=pInp.value.trim();
+        onSave(upd);
+      }},"Keydi Isbedelka")
+    )
+  );
+}
+
+
+function renderIsps(){
+  const {isps} = STATE;
+  let newIspVal = "";
+
+  const listDiv = () => {
+    const wrap = div({style:{display:"flex",flexDirection:"column",gap:"8px",marginBottom:"18px"}});
+    isps.forEach((isp,i)=>{
+      const row = div({style:{display:"flex",alignItems:"center",gap:"10px",padding:"10px 14px",background:"#fff",border:"1px solid #E2E8F0",borderRadius:"8px"}},
+        div({style:{flex:"1",fontWeight:"600",color:"#1A365D",fontSize:"14px"}},"📡 "+isp),
+        isps.length>1?btn({style:{background:"#E53E3E",color:"#fff",border:"none",padding:"4px 10px",borderRadius:"6px",fontSize:"12px",fontWeight:"600"},
+          onClick:()=>{
+            if(confirm("ISP \""+isp+"\" tirtir?")){
+              setState(s=>({isps:s.isps.filter((_,j)=>j!==i)}));
+            }
+          }},"Tirtir"):null
+      );
+      wrap.appendChild(row);
+    });
+    return wrap;
+  };
+
+  const nameInp = inp({className:"inp",placeholder:"ISP magaciisa geli..."});
+  nameInp.addEventListener("input",e=>newIspVal=e.target.value.trim());
+  nameInp.addEventListener("keydown",e=>{
+    if(e.key==="Enter" && nameInp.value.trim()){
+      const v=nameInp.value.trim().toUpperCase();
+      if(STATE.isps.includes(v)){alert("ISP-kan hore ayuu ku jiray!");return;}
+      setState(s=>({isps:[...s.isps,v]}));
+    }
+  });
+
+  const container = div({},
+    div({className:"row-flex",style:{marginBottom:"18px"}},
+      h("h2",{className:"page-title",style:{margin:0}},"📡 ISP Maamul"),
+      span({style:{fontSize:"13px",color:"#718096"}},isps.length+" ISP")
+    ),
+    div({className:"card"},
+      h("h3",{style:{margin:"0 0 14px",fontSize:"14px",color:"#2D3748"}},"ISP-yada Jira"),
+      listDiv(),
+      div({style:{borderTop:"1px solid #E2E8F0",paddingTop:"16px",marginTop:"4px"}},
+        lbl({className:"lbl"},"ISP Cusub Ku Dar"),
+        div({className:"flex"},
+          div({style:{flex:"1"}},nameInp),
+          btn({className:"btn-primary",style:{flexShrink:"0"},onClick:()=>{
+            const v=nameInp.value.trim().toUpperCase();
+            if(!v){alert("Magaca buuxi");return;}
+            if(STATE.isps.includes(v)){alert("ISP-kan hore ayuu ku jiray!");return;}
+            setState(s=>({isps:[...s.isps,v]}));
+            nameInp.value="";
+          }},"+ Ku Dar")
+        ),
+        div({style:{fontSize:"11px",color:"#A0AEC0",marginTop:"6px"}},"Tip: Enter-ka riix ama badhanka \"+ Ku Dar\" guji")
+      )
+    )
+  );
+  return container;
+}
+
+function renderModal(){
+  const {modal,selClientId,selUserId,clients,users,session} = STATE;
+  if(!modal) return null;
+  const c=clients.find(x=>x.id===selClientId);
+  const isAdmin=session?.role==="admin";
+
+  let content;
+  if(modal==="addClient"){
+    content=renderClientForm(null,false,
+      data=>setState(s=>({clients:[...s.clients,{...data,id:genId(),visits:[]}],modal:null})),
+      ()=>setState({modal:null})
+    );
+  } else if(modal==="editClient"&&c&&isAdmin){
+    content=renderClientForm(c,true,
+      data=>setState(s=>({clients:s.clients.map(x=>x.id===c.id?{...x,...data}:x),modal:null})),
+      ()=>setState({modal:null})
+    );
+  } else if(modal==="addVisit"&&c){
+    content=renderVisitForm(c,
+      v=>setState(s=>({clients:s.clients.map(x=>x.id===c.id?{...x,visits:[...x.visits,{...v,id:genId(),date:new Date().toISOString(),agent:s.session.name}]}:x),modal:null})),
+      ()=>setState({modal:null})
+    );
+  } else if(modal==="editUser"&&isAdmin&&selUserId){
+    const u=users.find(x=>x.id===selUserId);
+    if(u) content=renderEditUserForm(u,
+      upd=>setState(s=>({users:s.users.map(x=>x.id===u.id?{...x,...upd}:x),modal:null,selUserId:null})),
+      ()=>setState({modal:null,selUserId:null})
+    );
+  } else if(modal==="addUser"&&isAdmin){
+    content=renderUserForm(
+      data=>setState(s=>({users:[...s.users,{...data,id:genId(),role:"user"}],modal:null})),
+      ()=>setState({modal:null})
+    );
+  }
+  if(!content) return null;
+
+  const overlay=div({className:"overlay"});
+  overlay.addEventListener("click",e=>{if(e.target===overlay)setState({modal:null});});
+  overlay.appendChild(content);
+  return overlay;
+}
+
+// ═══════════════════════════════════════════
+// EXCEL EXPORT
+// ═══════════════════════════════════════════
+function exportToExcel(){
+  const {clients} = STATE;
+
+  // Sheet 1: Macaamiisha
+  const clientRows = [
+    ["SN","Magaca","Telefoon","Contact Person","Nooca","ISP","Shaqaalaha","Adeegyada","Booqashooyinka"]
+  ];
+  clients.forEach((c,i)=>{
+    // build service details string
+    const svcStr = c.services.map(s=>{
+      const d=c.svcData?.[s];
+      const num=d?Object.values(d).filter(Boolean).join("/"):"";
+      return num?`${s}(${num})`:s;
+    }).join(", ");
+    clientRows.push([i+1,c.name,c.phone,c.contact,c.type,c.isp,c.employees,svcStr,c.visits.length]);
+  });
+
+  // Sheet 2: Booqashooyinka
+  const visitRows = [
+    ["SN","Macmiil","Nooca","Agent","Taariikhda","Xaalada","Adeeg Cusub","Adeeg Joojiyay","Numberka Adeegga","Faallo"]
+  ];
+  let vn=1;
+  clients.forEach(c=>{
+    c.visits.forEach(v=>{
+      const newSvcStr=(v.newServices||[]).map(s=>{
+        const num=v.serviceNumbers?.[s]||"";
+        return num?`${s}(${num})`:s;
+      }).join(", ");
+      const rmSvcStr=(v.removedServices||[]).join(", ");
+      const numStr=Object.entries(v.serviceNumbers||{}).map(([s,n])=>`${s}: ${n}`).join(", ");
+      visitRows.push([vn++,c.name,c.type,v.agent,fmtDate(v.date),v.status,newSvcStr,rmSvcStr,numStr,v.notes||""]);
+    });
+  });
+
+  // Build XML Excel (SpreadsheetML - works in all Excel versions)
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+  const makeSheet = (rows) => rows.map((row,ri)=>
+    `<Row ss:Index="${ri+1}">${row.map((cell,ci)=>
+      `<Cell ss:Index="${ci+1}"><Data ss:Type="${typeof cell==='number'?'Number':'String'}">${esc(cell)}</Data></Cell>`
+    ).join("")}</Row>`
+  ).join("\n");
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:x="urn:schemas-microsoft-com:office:excel">
+ <Styles>
+  <Style ss:ID="h"><Font ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#0055A4" ss:Pattern="Solid"/></Style>
+  <Style ss:ID="e"><Interior ss:Color="#EBF4FF" ss:Pattern="Solid"/></Style>
+ </Styles>
+ <Worksheet ss:Name="Macaamiisha">
+  <Table>${makeSheet(clientRows)}</Table>
+ </Worksheet>
+ <Worksheet ss:Name="Booqashooyinka">
+  <Table>${makeSheet(visitRows)}</Table>
+ </Worksheet>
+</Workbook>`;
+
+  const blob = new Blob([xml], {type:"application/vnd.ms-excel;charset=utf-8"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = `Hormuud_Booqasho_${new Date().toISOString().slice(0,10)}.xls`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function render(){
+  const root=document.getElementById("app");
+  root.innerHTML="";
+
+  if(!STATE.session){
+    root.appendChild(renderLogin());
+    return;
+  }
+
+  const isAdmin=STATE.session.role==="admin";
+  const navItems=[
+    {id:"dashboard",label:"📊 Dashboard"},
+    {id:"clients",label:"🏢 Macaamiisha"},
+    ...(isAdmin?[{id:"users",label:"👥 Isticmaalayaasha"},{id:"isps",label:"📡 ISP Maamul"}]:[]),
+    {id:"visits",label:"📋 Booqashooyinka"},
+  ];
+
+  // Topbar
+  const topbar=div({className:"topbar"},
+    div({className:"topbar-left"},
+      div({className:"logo"},"H"),
+      span({style:{fontWeight:"700",fontSize:"16px"}},"Hormuud · Nidaamka Booqashada")
+    ),
+    div({className:"topbar-right"},
+      span({},`👤 ${STATE.session.name}`),
+      isAdmin?span({className:"badge-admin"},"ADMIN"):null,
+      btn({style:{background:"#00A651",border:"none",color:"#fff",padding:"5px 13px",borderRadius:"6px",fontSize:"12px",fontWeight:"600"},
+        onClick:exportToExcel},"⬇ Excel"),
+      btn({className:"btn-logout",onClick:()=>setState({session:null,view:"dashboard",modal:null,loginErr:""})},"Ka Bax")
+    )
+  );
+
+  // Sidebar
+  const sidebar=div({className:"sidebar"});
+  navItems.forEach(item=>{
+    const b=btn({className:"nav-btn"+(STATE.view===item.id?" active":""),
+      onClick:()=>setState({view:item.id,selClientId:null})},item.label);
+    sidebar.appendChild(b);
+  });
+
+  // Main content
+  let content;
+  if(STATE.view==="dashboard")     content=renderDashboard();
+  else if(STATE.view==="clients")  content=renderClients();
+  else if(STATE.view==="clientDetail") content=renderClientDetail();
+  else if(STATE.view==="visits")   content=renderVisits();
+  else if(STATE.view==="users"&&isAdmin) content=renderUsers();
+  else if(STATE.view==="isps"&&isAdmin)  content=renderIsps();
+  else content=renderDashboard();
+
+  const main=div({className:"main"},content);
+  const layout=div({className:"layout"},sidebar,main);
+
+  root.appendChild(topbar);
+  root.appendChild(layout);
+
+  const modalEl=renderModal();
+  if(modalEl) root.appendChild(modalEl);
+}
+
+render();
+</script>
+</body>
+</html>

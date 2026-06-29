@@ -70,7 +70,13 @@ function buildSeedData() {
     { id: uuid(), user_id: MARKETING_ID, action: 'CREATE_VISIT', description: 'Logged visit to Barwaaqo Supermarket', timestamp: now }
   ];
 
-  return { users, visits, auditLogs, otps: [], passwordResets: [] };
+  const tasks = [
+    { id: uuid(), assigned_by: ADMIN_ID, assigned_to: MARKETING_ID, service: 'EVC Plus (Mobile Money)', description: 'Visit 5 retail shops in Hodan district to register new EVC Plus merchants', date: daysAgo(0), status: 'pending', created_at: now },
+    { id: uuid(), assigned_by: ADMIN_ID, assigned_to: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e', service: 'ADSL Plus (Home Broadband)', description: 'Follow up with 3 potential ADSL customers in Wadajir', date: daysAgo(0), status: 'completed', created_at: now },
+    { id: uuid(), assigned_by: ADMIN_ID, assigned_to: MARKETING_ID, service: 'WAAFI App (Fintech)', description: 'Demonstrate WAAFI app features to 2 business owners in Hamar Weyne', date: daysAgo(1), status: 'completed', created_at: now },
+  ];
+
+  return { users, visits, auditLogs, otps: [], passwordResets: [], tasks };
 }
 
 function createMockDb() {
@@ -228,6 +234,43 @@ function createMockDb() {
         return [...store.passwordResets].reverse().find(r => r[key] === filter[key] && !r.is_used) || null;
       },
       update: async (id, updates) => dbUpdate('passwordResets', id, updates)
+    },
+
+    tasks: {
+      findMany: async (filters = {}) => {
+        let list = [...store.tasks].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        if (filters.date) list = list.filter(t => t.date === filters.date);
+        if (filters.user_id) {
+          list = list.filter(t => t.assigned_to === filters.user_id || t.assigned_to === null);
+        }
+        if (filters.status) list = list.filter(t => t.status === filters.status);
+        return list;
+      },
+      findOne: async (filter) => {
+        const key = Object.keys(filter)[0];
+        return store.tasks.find(t => t[key] === filter[key]) || null;
+      },
+      create: async (taskData) => {
+        const task = {
+          id: uuid(),
+          assigned_by: taskData.assigned_by,
+          assigned_to: taskData.assigned_to || null,
+          service: taskData.service,
+          description: taskData.description,
+          date: taskData.date,
+          status: taskData.status || 'pending',
+          created_at: new Date().toISOString()
+        };
+        store.tasks.push(task);
+        return task;
+      },
+      update: async (id, updates) => dbUpdate('tasks', id, updates),
+      delete: async (id) => {
+        const idx = store.tasks.findIndex(t => t.id === id);
+        if (idx === -1) return null;
+        const [removed] = store.tasks.splice(idx, 1);
+        return removed;
+      }
     }
   };
 }

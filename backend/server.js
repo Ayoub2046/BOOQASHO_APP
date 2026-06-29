@@ -9,6 +9,7 @@ const userRoutes = require('./routes/users');
 const visitRoutes = require('./routes/visits');
 const dashboardRoutes = require('./routes/dashboard');
 const reportRoutes = require('./routes/reports');
+const taskRoutes = require('./routes/tasks');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -40,6 +41,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/visits', visitRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({
